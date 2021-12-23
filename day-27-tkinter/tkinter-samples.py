@@ -26,7 +26,7 @@ entry.insert(END, string="Some text to begin with.")
 print(entry.get())
 entry.pack()
 
-#Text
+#Textbox
 text = Text(height=5, width=30)
 #Puts cursor in textbox.
 text.focus()
