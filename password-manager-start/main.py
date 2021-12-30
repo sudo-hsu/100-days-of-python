@@ -4,6 +4,7 @@ import random
 import pyperclip
 EMAIL = "test@gmail.com"
 
+
 # ---------------------------- PASSWORD GENERATOR ------------------------------- #
 
 
