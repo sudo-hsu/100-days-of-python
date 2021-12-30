@@ -2,6 +2,7 @@ from tkinter import *
 from tkinter import messagebox
 import random
 import pyperclip
+import json
 EMAIL = "test@gmail.com"
 
 
@@ -35,18 +36,51 @@ def save():
     user_website = website_entry.get()
     user_email = email_entry.get()
     user_password = password_entry.get()
+    new_data = {
+        user_website: {
+            "email": user_email,
+            "password": user_password,
+        }
+    }
 
     if len(user_website) == 0 or len(user_email) == 0 or len(user_password) == 0:
         messagebox.showinfo(title="Warning!", message="Fields cannot be empty!")
 
     else:
-        is_ok = messagebox.askokcancel(title=user_website, message=f"These are the details entered: \nEmail: {user_email}\n"
-                                                           f"Password: {user_password}\nIs it ok to save?")
-        if is_ok:
-            with open("data.txt", mode="a") as file:
-                file.write(f"{user_website} | {user_email} | {user_password}\n")
+        try:
+            with open("data.json", mode="r") as file:
+                #Reading old data
+                data = json.load(file)
+        except FileNotFoundError:
+            with open("data.json", mode="w") as file:
+                json.dump(new_data, file, indent=4)
+        else:
+            # Updating old data with new data
+            data.update(new_data)
+            with open("data.json", mode="w") as file:
+                #Saving updated data
+                json.dump(data, file, indent=4)
+        finally:
             website_entry.delete(0, END)
             password_entry.delete(0, END)
+
+# ---------------------------- SEARCH ------------------------------- #
+
+def find_password():
+    user_website = website_entry.get()
+    try:
+        with open("data.json", mode="r") as file:
+            data = json.load(file)
+    except FileNotFoundError:
+        messagebox.showinfo(title="Error!", message=f"data.json is not found! Create some entries first!")
+    else:
+        if user_website in data:
+            email = data[user_website]["email"]
+            password = data[user_website]["password"]
+            messagebox.showinfo(title="Login Info", message=f"Your login info for {user_website} is:"
+                                                            f"\nEmail: {email}\nPassword: {password}")
+        else:
+            messagebox.showinfo(title="Error!", message=f"No data exists for {user_website} yet!")
 
 # ---------------------------- UI SETUP ------------------------------- #
 window = Tk()
@@ -60,23 +94,26 @@ canvas.grid(column=1, row=0)
 
 website_label = Label(text="Website:")
 website_label.grid(column=0, row =1)
-website_entry = Entry(width=35)
-website_entry.grid(column=1, row=1, columnspan=2)
+website_entry = Entry(width=25)
+website_entry.grid(column=1, row=1, columnspan=1)
 website_entry.focus()
+
+search_button = Button(text="Search", command=find_password, width=15)
+search_button.grid(column=2, row=1)
 
 email_label = Label(text="Email/Username:")
 email_label.grid(column=0, row =2)
-email_entry = Entry(width=35)
+email_entry = Entry(width=44)
 email_entry.grid(column=1, row=2, columnspan=2)
 # inserts pre-populated email
 email_entry.insert(0, EMAIL)
 
 password_label = Label(text="Password:")
 password_label.grid(column=0, row=3)
-password_entry = Entry(width=18)
+password_entry = Entry(width=25)
 password_entry.grid(column=1, row=3)
 
-password_button = Button(text="Generate Password", command=generate_password)
+password_button = Button(text="Generate Password", command=generate_password, width=15)
 password_button.grid(column=2, row=3)
 
 add_button = Button(text="Add", command=save, width=34)
