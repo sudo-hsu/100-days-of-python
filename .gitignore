@@ -126,4 +126,4 @@ dmypy.json
 # Pyre type checker
 .pyre/
 day-32-send-email-dates/secrets.py
-api-iss-tracker/secrets.py
+birthday-wisher/secrets.py
