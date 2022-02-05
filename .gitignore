@@ -127,3 +127,4 @@ dmypy.json
 .pyre/
 day-32-send-email-dates/secrets.py
 birthday-wisher/secrets.py
+api-iss-tracker/secrets.py
